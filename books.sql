@@ -22,7 +22,7 @@ CREATE TABLE Order
     date_order date,
     date_payment date,
     date_done date,
-    FOREIGN KEY (date_done) REFERENCES Delivery(date_done),
+    FOREIGN KEY (date_done) REFERENCES Delivery(date_done) ON DELETE CASCADE,
     CONSTRAINT PK_order PRIMARY KEY ( "id" )
 
 );
@@ -42,11 +42,11 @@ CREATE TABLE Order_Book(
     book_type varchar(50),
     author varchar(50),
 
-    FOREIGN KEY(author) REFERENCES Book(author),
-    FOREIGN KEY(book_id) REFERENCES Book(book_id),
-    FOREIGN KEY (order_id) REFERENCES Order(order_id),
-    FOREIGN KEY(book_name) REFERENCES Book(book_name),
-    FOREIGN KEY(book_type) REFERENCES Book(book_type)
+    FOREIGN KEY(author) REFERENCES Book(author) ON DELETE CASCADE,
+    FOREIGN KEY(book_id) REFERENCES Book(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES Order(order_id) ON DELETE CASCADE,
+    FOREIGN KEY(book_name) REFERENCES Book(book_name) ON DELETE CASCADE,
+    FOREIGN KEY(book_type) REFERENCES Book(book_type) ON DELETE CASCADE
 
 );
 

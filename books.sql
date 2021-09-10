@@ -19,12 +19,22 @@ CREATE TABLE Customer
 CREATE TABLE Order
 (
     "id"      int NOT NULL,
+    id_customer int NOT NULL,
     date_order date,
     date_payment date,
     date_done date,
-    FOREIGN KEY (date_done) REFERENCES Delivery(date_done) ON DELETE CASCADE,
+    OREIGN KEY(id_customer) REFERENCES Customer("id"),
     CONSTRAINT PK_order PRIMARY KEY ( "id" )
 
+);
+
+CREATE TABLE Payment(
+    "id" int NOT NULL,
+    summ float,
+    order_id int NOT NULL,
+    reciever varchar(30),
+    CONSTRAINT PK_payment PRIMARY KEY("id"),
+    FOREIGN KEY(order_id) REFERENCES Order("id") ON DELETE CASCADE
 );
 
 CREATE TABLE Delivery(
@@ -42,11 +52,9 @@ CREATE TABLE Order_Book(
     book_type varchar(50),
     author varchar(50),
 
-    FOREIGN KEY(author) REFERENCES Book(author) ON DELETE CASCADE,
     FOREIGN KEY(book_id) REFERENCES Book(book_id) ON DELETE CASCADE,
     FOREIGN KEY (order_id) REFERENCES Order(order_id) ON DELETE CASCADE,
-    FOREIGN KEY(book_name) REFERENCES Book(book_name) ON DELETE CASCADE,
-    FOREIGN KEY(book_type) REFERENCES Book(book_type) ON DELETE CASCADE
+   
 
 );
 
@@ -65,28 +73,29 @@ CREATE TABLE Book(
 );
 
 --Посчитать количество "смешанных" заказов за день
-SELECT COUNT (*)
-FROM Order
-WHERE book_type="book" AND book_type="e-book" AND date_done=DAY(GETDATE());
+SELECT COUNT *
+FROM Order JOIN Order_Book ON Order.primarykey=Order_Book.foreignkey JOIN Order_Book ON Book Book.primarykey=Order_Book.foreignkey
+WHERE Order.date_order=GETDAY() AND Book.book_type="ebook" AND Book.book_type="book"
 
 
 --Посчитать количество заказов в которых содержится книга "N"
 
-SELECT COUNT(*)
-FROM Order
-WHERE book_name="N";
+SELECT COUNT *
+FROM Order JOIN Order_Book ON Order.primarykey=Order_Book.foreignkey JOIN Order_Book ON Book Book.primarykey=Order_Book.foreignkey
+WHERE Book.name="N"
 
---Посчитать продажи за месяц по автору(количество книг и денежный эквивалент)
-SELECT COUNT(*)
-FROM Order_Book
-WHERE author="Lev Tolstoi" AND date
+
+
+--тут дописать сумм как-то добавлять еще таблицы пеймент_ордер и делать джоин еще 2х?
+SELECT COUNT *,
+FROM Order JOIN Order_Book ON Order.primarykey=Order_Book.foreignkey JOIN Order_Book ON Book Book.primarykey=Order_Book.foreignkey
+WHERE Book.author="Lev Tolstoi" AND YEAR(Order.date_done)=2021 AND MOUNTH(Order.date_done)=9
+
 
 --Вывести все заказы по определенному пользователю где были только электронные книги
-SELECT *
-FROM Order
-WHERE book_type="e-book" AND 
+SELECT  *
+FROM Order JOIN Order_Book ON Order.primarykey=Order_Book.foreignkey JOIN Order_Book ON Book Book.primarykey=Order_Book.foreignkey
+WHERE Order.customer_id=1 AND Book.book_type="ebook"
 
 --Количество успешных доставок, по определенному пользователю, где количество книг > 2
-SELECT COUNT(*)
-FROM Delivery
-WHERE reciever="Harry Potter" AND
+
